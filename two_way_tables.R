@@ -2,6 +2,7 @@
 
 # load libraries
 library(ggplot2)
+library(wesanderson)
 
 # Load some data
 load("stat_data/titanic.RData")
@@ -30,4 +31,24 @@ ggplot(titanic, aes(x = survival, y = after_stat(prop),
   geom_bar(position = "dodge")+
   labs(x = NULL, y = NULL, fill = "passenger\nclass")+
   scale_y_continuous(labels = scales::percent)+
+  #scale_fill_manual(values = c("royalblue1",
+  #                             "tomato",
+  #                             "palegoldenrod"))+
+  #scale_fill_brewer(palette = "BuGn")+
+  #scale_fill_viridis_d()+
+  scale_fill_manual(values = wes_palette("Darjeeling1"))+
   theme_bw()
+
+# odds ratios
+tab
+
+# first to second OR
+(200*158)/(119*123)
+
+# second to third OR 
+(119*528)/(181*158)
+
+# first to third OR
+(200*528)/(181*123)
+
+2.158912*2.197077
