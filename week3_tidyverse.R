@@ -10,7 +10,9 @@
 # Load libraries and data -------------------------------------------------
 
 library(tidyverse)
+library(gt)
 load("stat_data/earnings.RData")
+load("stat_data/crimes.RData")
 
 
 
@@ -70,7 +72,8 @@ final_result <- c(39, 42, 23, 17, 81, 144) |>
 
 # Real data cleaning example ----------------------------------------------
 
-# Get mean wages by gender, race, and whether respondent has children
+# Get mean wages by gender, race, and whether respondent has children among
+# those under 45 years of age
 
 # create has_children variable
 earnings$has_children <- earnings$nchild>0
@@ -86,3 +89,39 @@ earnings_agg <- aggregate(wages~gender+race+has_children, data=earnings_sub, mea
 # reorder the aggregate earnings from lowest to highest wage
 earnings_agg <- earnings_agg[order(earnings_agg$wages),]
 
+# tidyverse solution
+earnings_agg <- earnings |>
+  mutate(has_children = nchild > 0) |>
+# filter(age < 45) |>
+  select(wages, gender, race, has_children) |>
+  group_by(gender, race, has_children) |>
+  summarize(mean_wages = mean(wages), median_wages = median(wages)) |>
+  arrange(mean_wages)
+
+# save nothing! just print out nicely
+earnings |>
+  mutate(has_children = nchild > 0) |>
+  # filter(age < 45) |>
+  select(wages, gender, race, has_children) |>
+  group_by(gender, race, has_children) |>
+  summarize(mean_wages = mean(wages), median_wages = median(wages)) |>
+  ungroup() |>
+  arrange(mean_wages) |>
+  gt()
+
+
+# Getting Variables -------------------------------------------------------
+
+
+# get all the rates from crimes data
+crimes |>
+  select(ends_with("_rate"))
+
+crimes |>
+  select(starts_with("median_"))
+
+crimes |>
+  select(starts_with("median_"), ends_with("_rate"), gini)
+
+crimes |>
+  select(contains("pr"))
