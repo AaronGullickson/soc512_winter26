@@ -1,4 +1,7 @@
-# Fun with Two-Way Tables
+# Measuring Association 
+
+
+# Setup --------------------------------------------------------------------
 
 # load libraries
 library(ggplot2)
@@ -7,6 +10,9 @@ library(wesanderson)
 # Load some data
 load("stat_data/titanic.RData")
 load("stat_data/movies.RData")
+
+
+# Fun with Two-Way Tables --------------------------------------------------
 
 # two way table survivorship and passenger class
 tab <- table(titanic$pclass, titanic$survival)
