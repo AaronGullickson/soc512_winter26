@@ -4,6 +4,7 @@ author: Aaron Gullickson
 format:
   html: default
   pdf: default
+  docx: default
 execute: 
   echo: false
   warning: false
@@ -15,6 +16,7 @@ execute:
 #| output: false
 
 library(tidyverse)
+library(gt)
 load("stat_data/popularity.RData")
 ```
 
@@ -23,6 +25,11 @@ load("stat_data/popularity.RData")
 ## Second level header
 
 ### Third level header
+
+```{r}
+# this won't work on render because we haven't defined x in the document
+#x * 2
+```
 
 #### Fourth level header
 
@@ -52,19 +59,39 @@ This is a paragraph.
 | Mangoes   | Yummy     |
 | Bananas   | So-So     |
 
-
+As @tbl-sports-by-grade shows, ...
 
 ```{r}
-#| label: sports-by-grade
+#| label: tbl-sports-by-grade
+#| tbl-cap: Mean sports played by grade
 #| echo: true
 
 popularity |>
   group_by(grade) |>
-  summarize(mean_sports = mean(nsports))
+  summarize(mean_sports = mean(nsports)) |>
+  gt() |>
+  cols_label(grade = "Grade",
+             mean_sports = "Mean sports played") |>
+  fmt_number(mean_sports, decimals = 3)
 ```
 
 ```{r}
 #| label: warning-example
 
 as.numeric("A")
+```
+
+As @fig-sports-grade shows, sports participation goes down with age.
+
+```{r}
+#| label: fig-sports-grade
+#| fig-cap: Violin plot showing relationship between number of sports played and grade in school.
+
+ggplot(popularity, 
+       aes(x = factor(grade), y = nsports))+
+  geom_violin(fill = "darkgreen")+
+  geom_jitter(alpha = 0.05)+
+  labs(x = "grade in school", 
+       y = "sports played")+
+  theme_bw()
 ```
