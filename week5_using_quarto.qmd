@@ -1,10 +1,18 @@
 ---
 title: "Untitled"
-format: html
+author: Aaron Gullickson
+format:
+  html: default
+  pdf: default
+execute: 
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r}
 #| label: setup
+#| output: false
 
 library(tidyverse)
 load("stat_data/popularity.RData")
@@ -12,12 +20,51 @@ load("stat_data/popularity.RData")
 
 # Compare number of sports by grade
 
-How do number of sports differ by grade level
+## Second level header
+
+### Third level header
+
+#### Fourth level header
+
+How do **number** of *sports* differ by _grade_ level?
+
+- I don't know
+- Another point
+- Bob
+  - Or Amanda?
+
+1. First **point**
+1. Second point
+1. Third point
+
+> I have sworn upon the altar of God eternal hostility against every form of tyranny over the mind of man
+
+This is a paragraph.
+
+This is another paragraph.
+
+This is a paragraph.
+  This is not another paragraph. 
+  
+| Fruits    | Tastiness |
+|-----------|-----------|
+| Apples    | Eh        |
+| Mangoes   | Yummy     |
+| Bananas   | So-So     |
+
+
 
 ```{r}
 #| label: sports-by-grade
+#| echo: true
 
 popularity |>
   group_by(grade) |>
   summarize(mean_sports = mean(nsports))
+```
+
+```{r}
+#| label: warning-example
+
+as.numeric("A")
 ```
