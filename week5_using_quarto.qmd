@@ -1,0 +1,23 @@
+---
+title: "Untitled"
+format: html
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+load("stat_data/popularity.RData")
+```
+
+# Compare number of sports by grade
+
+How do number of sports differ by grade level
+
+```{r}
+#| label: sports-by-grade
+
+popularity |>
+  group_by(grade) |>
+  summarize(mean_sports = mean(nsports))
+```
