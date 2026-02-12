@@ -12,5 +12,6 @@ library(readxl)
 
 my_data <- read_csv("example_data/data.csv")
 
-read_csv("example_data/messy_data.csv")
+my_data <- read_csv("example_data/messy_data.csv", 
+                    comment = "*", skip = 3)
 
