@@ -10,5 +10,7 @@ library(readxl)
 
 # CSV Files ---------------------------------------------------------------
 
+my_data <- read_csv("example_data/data.csv")
 
+read_csv("example_data/messy_data.csv")
 
