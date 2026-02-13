@@ -4,7 +4,7 @@
 
 # Load libraries ----------------------------------------------------------
 
-library(readr)
+library(tidyverse)
 library(haven)
 library(readxl)
 
@@ -40,8 +40,18 @@ acs_data <- read_fwf("example_data/usa_00131.dat.gz",
                                               cluster = c(24, 36)),
                      col_types = cols(.default = "i", cluster = "d"))
 
+acs_data <- acs_data |>
+  mutate(sex = case_when(
+    sex == 1 ~ "Male",
+    sex == 2 ~ "Female"
+  ))
+
+save(acs_data, file = "example_data/acs.RData")
 
 # Read in binary data -----------------------------------------------------
 
+load("example_data/acs.RData")
 
-load("stat_data/popularity.RData")
+# excel format
+read_excel("example_data/data.xlsx")
+
