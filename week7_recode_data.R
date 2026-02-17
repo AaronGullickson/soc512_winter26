@@ -21,3 +21,20 @@ acs <- read_fwf("example_data/usa_00131.dat.gz",
                 col_types = cols(.default = "i"))
 
 
+# Recode Data -------------------------------------------------------------
+
+# mutate, case_when, and if_else are the workhorses here
+
+
+
+
+
+# Filter, Select, and Save ------------------------------------------------
+
+# filter will allow us to subset by observations
+
+
+# select will allow us to subset by variables
+
+
+# save the final analytical data
