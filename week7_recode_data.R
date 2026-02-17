@@ -25,7 +25,30 @@ acs <- read_fwf("example_data/usa_00131.dat.gz",
 
 # mutate, case_when, and if_else are the workhorses here
 
+# recode sex variable
+acs <- acs |>
+  mutate(sex = case_when(SEX == 1 ~ "Male",
+                         SEX == 2 ~ "Female"),
+         sex = factor(sex))
 
+# check yourself before you wreck yourself!
+table(acs$SEX, acs$sex, exclude = NULL)
+
+# code education
+acs <- acs |>
+  mutate(educ = case_when(EDUCD <= 1 | EDUCD == 999 ~ NA,
+                          EDUCD <= 61 ~ "Less than HS",
+                          EDUCD <= 65 ~ "HS Diploma",
+                          EDUCD <= 100 ~ "Some College",
+                          EDUCD <= 113 ~ "Bachelors",
+                          EDUCD <= 116 ~ "Grad Degree"),
+         educ = factor(educ, 
+                       levels = c("Less than HS", "HS Diploma", "Some College",
+                                  "Bachelors", "Grad Degree"))
+    
+  )
+
+table(acs$EDUCD, acs$educ, exclude = NULL)
 
 
 
@@ -35,6 +58,9 @@ acs <- read_fwf("example_data/usa_00131.dat.gz",
 
 
 # select will allow us to subset by variables
+acs <- acs |> 
+  select(sex, educ)
 
 
 # save the final analytical data
+save(acs, file = "example_data/acs.RData")
