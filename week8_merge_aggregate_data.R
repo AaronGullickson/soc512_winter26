@@ -89,12 +89,67 @@ world_bank <- world_bank |>
 
 # Aggregating Data --------------------------------------------------------
 
-cov_state_degree <- acs |>
+# aggregate state and degree to make picture
+acs |>
   filter(!is.na(degree)) |>
   group_by(state, degree) |>
   summarize(p_covered = mean(health_ins == "Covered"),
             n = n(),
-            .groups = "drop")
+            .groups = "drop") |>
+  ggplot(aes(x = degree, y = p_covered, group = state, color = state))+
+  geom_line(alpha = 0.5)+
+  geom_point(alpha = 0.5)+
+  theme_bw()+
+  theme(legend.position = "none")
+
+# lets pivot wider to look at LHS-HS difference
+acs |>
+  filter(!is.na(degree)) |>
+  group_by(state, degree) |>
+  summarize(p_covered = mean(health_ins == "Covered"),
+            n = n(),
+            .groups = "drop") |>
+  mutate(degree = str_to_lower(degree)) |>
+  pivot_wider(names_from = degree,
+              values_from = c(p_covered, n)) |>
+  mutate(diff_lhs_hs = p_covered_hs - p_covered_lhs) |>
+  select(state, diff_lhs_hs) |>
+  ggplot(aes(x = reorder(state, diff_lhs_hs, mean),
+             y = diff_lhs_hs))+
+  geom_col()+
+  coord_flip()
+  
+
+
+# Merge data --------------------------------------------------------------
+
+# which countries in the World Bank are not in VDEM?
+world_bank |>
+  filter(!(country_code %in% vdem$country_text_id)) |>
+  pull(country_name) |>
+  unique()
+
+vdem |>
+  filter(!(country_text_id %in% world_bank$country_code)) |>
+  pull(country_name) |>
+  unique()
+
+# full join with world bank data
+vdem |> 
+  # rename country_text_id to match country_code from world bank data
+  rename(country_code = country_text_id) |>
+  # remove country_name so it doesn't try to match on it
+  select(-country_name) |>
+  full_join(world_bank)
+
+
+# left join to world bank data
+world_bank |>
+  # remove country name to avoid dupe var naes
+  select(-country_name) |>
+  left_join(vdem, 
+            by = join_by(country_code == country_text_id,
+                         year))
 
 
 
