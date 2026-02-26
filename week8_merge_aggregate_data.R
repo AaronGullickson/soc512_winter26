@@ -57,14 +57,44 @@ acs <- read_fwf("example_data/usa_00131.dat.gz",
 
 # Reshaping data ----------------------------------------------------------
 
-world_bank |>
+# clean up annoying world bank structure
+world_bank <- world_bank |>
+  # clean up names and tidy
   mutate(series_code = case_when(
     series_code == "NY.GDP.MKTP.CD" ~ "gdp_capita",
     series_code == "SP.DYN.LE00.IN" ~ "life_exp",
     series_code == "EN.ATM.CO2E.PC" ~ "co2_capita"
   )) |>
   select(-series_name) |>
+  # pivot longer to get country-year-variable rows
   pivot_longer(cols = starts_with("year"), names_to = "year",
                names_prefix = "year") |>
+  mutate(year = as.numeric(year)) |>
+  # now pivot wider to get back traditional long format of country-year
+  pivot_wider(values_from = value, names_from = series_code)
+
+# pivot wider to country format
+world_bank <- world_bank |>
+  pivot_wider(values_from = c(gdp_capita, life_exp, co2_capita),
+              names_from = year, names_sep = ".")
+
+# pivot back to long
+world_bank <- world_bank |>
+  pivot_longer(cols = ends_with("2018") | ends_with("2019"), 
+               names_sep = "\\.",
+               names_to = c(".value", "year")) |>
   mutate(year = as.numeric(year))
+
+
+
+# Aggregating Data --------------------------------------------------------
+
+cov_state_degree <- acs |>
+  filter(!is.na(degree)) |>
+  group_by(state, degree) |>
+  summarize(p_covered = mean(health_ins == "Covered"),
+            n = n(),
+            .groups = "drop")
+
+
 
