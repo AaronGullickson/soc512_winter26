@@ -54,3 +54,17 @@ acs <- read_fwf("example_data/usa_00131.dat.gz",
                    labels = state.name)) |>
   select(state, sex, age, health_ins, degree) |>
   filter(!is.na(state))
+
+# Reshaping data ----------------------------------------------------------
+
+world_bank |>
+  mutate(series_code = case_when(
+    series_code == "NY.GDP.MKTP.CD" ~ "gdp_capita",
+    series_code == "SP.DYN.LE00.IN" ~ "life_exp",
+    series_code == "EN.ATM.CO2E.PC" ~ "co2_capita"
+  )) |>
+  select(-series_name) |>
+  pivot_longer(cols = starts_with("year"), names_to = "year",
+               names_prefix = "year") |>
+  mutate(year = as.numeric(year))
+
