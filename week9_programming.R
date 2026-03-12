@@ -167,4 +167,50 @@ toc()
 
 
 
+# calculate dissimilarity -------------------------------------------------
+
+W <- sum(tracts_lane$pop_race_white)
+B <- sum(tracts_lane$pop_race_black)
+
+prop_white <- tracts_lane$pop_race_white / W
+sum(prop_white)
+prop_black <- tracts_lane$pop_race_black / B
+sum(prop_black)
+50 * sum(abs(prop_white - prop_black))
+
+tracts_lane |>
+  mutate(prop_white = pop_race_white / sum(pop_race_white),
+         prop_black = pop_race_black / sum(pop_race_black),
+         abs_diff = abs(prop_white - prop_black)) |>
+  group_by(county_id) |>
+  summarize(D = sum(abs_diff))
+  
+  #pull(abs_diff) |>
+  #sum() * 50
             
+calculate_dissimilarity <- function(tracts_county) {
+  tracts_county |>
+    mutate(prop_white = pop_race_white / sum(pop_race_white),
+           prop_black = pop_race_black / sum(pop_race_black),
+           abs_diff = abs(prop_white - prop_black)) |>
+    group_by(county_id) |>
+    summarize(D = 50 * sum(abs_diff))
+}
+
+tic()
+tracts |>
+  group_by(county_id) |>
+  group_split() |>
+  map(calculate_dissimilarity) |>
+  bind_rows()
+toc()
+
+
+tic()
+tracts |>
+  group_by(county_id) |>
+  mutate(prop_white = pop_race_white / sum(pop_race_white),
+         prop_black = pop_race_black / sum(pop_race_black),
+         abs_diff = abs(prop_white - prop_black)) |>
+  summarize(D = 50 * sum(abs_diff))
+toc()
